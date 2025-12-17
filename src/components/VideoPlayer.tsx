@@ -19,7 +19,8 @@ function VideoPlayer({
     onCanPlay,
     onError,
 }: VideoPlayerProps) {
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const videoRef = useRef<HTMLVideoElement>(null!);
+
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string>();
 
@@ -31,7 +32,7 @@ function VideoPlayer({
     };
 
     const handleError = () => {
-        const error = videoRef.current?.error;
+        const error = videoRef.current.error;
         const errorMessage =
             error?.message ||
             'An unknown error occurred while loading the video.';
@@ -39,11 +40,11 @@ function VideoPlayer({
         setIsLoading(false);
         setErrorMessage(errorMessage);
 
-        onError?.(videoRef.current?.error ?? undefined);
+        onError?.(videoRef.current.error ?? undefined);
     };
 
     useEffect(() => {
-        videoRef.current?.load();
+        videoRef.current.load();
     }, [src]);
 
     return (
