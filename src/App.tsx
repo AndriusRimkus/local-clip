@@ -4,22 +4,36 @@ import video3 from '@/assets/not_a_video.mp4';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { VideoSelector } from '@/components/VideoSelector';
 import { Button } from '@/components/ui/button';
-import FFmpeg from '@/lib/ffmpeg';
+import ffmpeg from '@/lib/ffmpeg';
 import { parseFileName, urlToFile } from '@/utils/file';
+import { fetchFile } from '@ffmpeg/util';
 import { useEffect, useState } from 'react';
 
 function App() {
     const [videoUrl, setVideoUrl] = useState('');
 
-    const handleVideoSelect = (file: File) => {
+    async function handleVideoSelect(file: File) {
         setVideoUrl(URL.createObjectURL(file));
-    };
 
-    const loadDemoVideo = async (videoPath: string) => {
+        await ffmpeg.load();
+        await ffmpeg
+            .get()
+            .writeFile(file.name, await fetchFile(file));
+
+        const entries = await ffmpeg.get().listDir('/');
+        const filesOnly = entries.filter((entry) => !entry.isDir);
+
+        console.log(
+            'Files:',
+            filesOnly.map((f) => f.name)
+        );
+    }
+
+    async function loadDemoVideo(videoPath: string) {
         const file = await urlToFile(videoPath, parseFileName(videoPath));
 
-        handleVideoSelect(file);
-    };
+        await handleVideoSelect(file);
+    }
 
     useEffect(() => {
         return () => {
@@ -28,15 +42,6 @@ function App() {
             }
         };
     }, [videoUrl]);
-
-    useEffect(() => {
-        (async () => {
-            await FFmpeg.load();
-            FFmpeg.exec(['-version']);
-
-            console.log('FFmpeg is ready to use');
-        })();
-    }, []);
 
     return (
         <div className="container mx-auto max-w-4xl p-8">

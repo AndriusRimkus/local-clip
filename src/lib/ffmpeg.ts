@@ -38,10 +38,6 @@ class FFmpeg {
         return this.lib;
     }
 
-    async exec(args: string[]): Promise<number> {
-        return this.get().exec(args);
-    }
-
     private async init() {
         const ffmpeg = new FFmpegLib();
 
