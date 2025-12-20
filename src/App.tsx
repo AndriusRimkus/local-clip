@@ -4,7 +4,7 @@ import video3 from '@/assets/not_a_video.mp4';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { VideoSelector } from '@/components/VideoSelector';
 import { Button } from '@/components/ui/button';
-import FFmpeg from '@/lib/FFmpeg';
+import FFmpeg from '@/lib/ffmpeg';
 import { parseFileName, urlToFile } from '@/utils/file';
 import { useEffect, useState } from 'react';
 
