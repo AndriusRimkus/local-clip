@@ -4,6 +4,7 @@ import video3 from '@/assets/not_a_video.mp4';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { VideoSelector } from '@/components/VideoSelector';
 import { Button } from '@/components/ui/button';
+import FFmpeg from '@/lib/FFmpeg';
 import { parseFileName, urlToFile } from '@/utils/file';
 import { useEffect, useState } from 'react';
 
@@ -27,6 +28,15 @@ function App() {
             }
         };
     }, [videoUrl]);
+
+    useEffect(() => {
+        (async () => {
+            await FFmpeg.load();
+            FFmpeg.exec(['-version']);
+
+            console.log('FFmpeg is ready to use');
+        })();
+    }, []);
 
     return (
         <div className="container mx-auto max-w-4xl p-8">
