@@ -62,6 +62,7 @@ function RangeSlider({
             onValueChange={onValueChange}
             min={min}
             max={max}
+            step={0.1}
             disabled={isDragging}
             className={cn(
                 'relative flex h-14 select-none touch-none',
@@ -72,11 +73,22 @@ function RangeSlider({
                 ref={trackRef}
                 className="relative bg-gray-50 border-1 border-gray-200 rounded-sm grow h-14"
             >
+                <div className="absolute inset-0 flex justify-between px-1 pointer-events-none">
+                    {Array.from({ length: 51 }, (_, i) => (
+                        <div
+                            key={i}
+                            className={cn(
+                                'w-px bg-gray-300 self-center',
+                                i % 5 === 0 ? 'h-2/3' : 'h-1/3'
+                            )}
+                        />
+                    ))}
+                </div>
                 <Slider.Range
                     ref={rangeRef}
                     {...bindDrag()}
                     className={cn(
-                        'absolute h-full bg-purple-500 touch-none',
+                        'absolute h-full bg-purple-500/50 touch-none',
                         isDragging ? 'cursor-grabbing' : 'cursor-grab'
                     )}
                 />
@@ -90,7 +102,7 @@ function RangeSlider({
 
 function Thumb() {
     return (
-        <Slider.Thumb className="flex flex-col gap-1 justify-center items-center w-4 h-14 bg-purple-700 rounded-sm border-2 border-white shadow-lg cursor-ew-resize hover:bg-sky-500 focus:bg-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-300 focus:ring-offset-1">
+        <Slider.Thumb className="flex flex-col gap-1 justify-center items-center w-4 h-14 bg-purple-700 rounded-sm border-2 border-white shadow-lg cursor-ew-resize hover:bg-sky-500 hover:ring-sky-300 focus:bg-sky-500 focus:outline-none ring-1 ring-purple-700 focus:ring-sky-300">
             <div className="size-0.5 bg-white rounded-full" />
             <div className="size-0.5 bg-white rounded-full" />
             <div className="size-0.5 bg-white rounded-full" />
