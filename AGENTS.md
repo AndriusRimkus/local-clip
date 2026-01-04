@@ -8,6 +8,8 @@ Rules and guidelines for AI agents working on this codebase.
 
 2. **Use named exports for components** - Always use named exports instead of default exports for React components.
 
+3. **Use function declarations** - Prefer `function Name() {}` over `const Name = () => {}` for both components and internal event handlers/helpers.
+
 ## UI Components
 
 1. **Prioritize shadcn/ui components** - Always use shadcn/ui components from `@/components/ui` when available instead of creating custom components or using raw HTML elements.

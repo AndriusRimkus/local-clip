@@ -2,12 +2,21 @@ import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+export interface VideoMetadata {
+    duration: number;
+    videoWidth: number;
+    videoHeight: number;
+}
+
 interface VideoPlayerProps {
     src: string;
     autoPlay?: boolean;
     className?: string;
+    currentTime?: number;
     onLoadStart?: () => void;
+    onLoadedMetadata?: (metadata: VideoMetadata) => void;
     onCanPlay?: () => void;
+    onTimeUpdate?: (currentTime: number) => void;
     onError?: (error?: MediaError) => void;
 }
 
@@ -15,9 +24,12 @@ function VideoPlayer({
     src,
     autoPlay = true,
     className,
+    currentTime,
     onLoadStart,
+    onLoadedMetadata,
     onCanPlay,
     onError,
+    onTimeUpdate,
 }: VideoPlayerProps) {
     const videoRef = useRef<HTMLVideoElement>(null!);
 
@@ -26,12 +38,24 @@ function VideoPlayer({
 
     const showOverlay = isLoading || !!errorMessage;
 
-    const handleCanPlay = () => {
+    function handleLoadedMetadata() {
+        onLoadedMetadata?.({
+            duration: videoRef.current.duration,
+            videoWidth: videoRef.current.videoWidth,
+            videoHeight: videoRef.current.videoHeight,
+        });
+    }
+
+    function handleCanPlay() {
         setIsLoading(false);
         onCanPlay?.();
-    };
+    }
 
-    const handleError = () => {
+    function handleTimeUpdate() {
+        onTimeUpdate?.(videoRef.current.currentTime);
+    }
+
+    function handleError() {
         const error = videoRef.current.error;
         const errorMessage =
             error?.message ||
@@ -41,11 +65,17 @@ function VideoPlayer({
         setErrorMessage(errorMessage);
 
         onError?.(videoRef.current.error ?? undefined);
-    };
+    }
 
     useEffect(() => {
         videoRef.current.load();
     }, [src]);
+
+    useEffect(() => {
+        if (currentTime !== undefined) {
+            videoRef.current.currentTime = currentTime;
+        }
+    }, [currentTime]);
 
     return (
         <div className={cn('relative overflow-hidden rounded-lg', className)}>
@@ -67,8 +97,10 @@ function VideoPlayer({
                 autoPlay={autoPlay}
                 controls
                 onLoadStart={() => onLoadStart?.()}
+                onLoadedMetadata={handleLoadedMetadata}
                 onCanPlay={handleCanPlay}
                 onError={handleError}
+                onTimeUpdate={handleTimeUpdate}
                 className={cn('h-full w-full', showOverlay && 'invisible')}
             />
         </div>
