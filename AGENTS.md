@@ -2,6 +2,12 @@
 
 Rules and guidelines for AI agents working on this codebase.
 
+## Code Style
+
+1. **Do not add comments** - Code should be self-documenting. Use clear variable names, function names, and structure instead of comments.
+
+2. **Use named exports for components** - Always use named exports instead of default exports for React components.
+
 ## UI Components
 
 1. **Prioritize shadcn/ui components** - Always use shadcn/ui components from `@/components/ui` when available instead of creating custom components or using raw HTML elements.

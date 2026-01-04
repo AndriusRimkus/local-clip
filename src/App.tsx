@@ -1,6 +1,7 @@
 import video1 from '@/assets/demo_video_1.mp4';
 import video2 from '@/assets/demo_video_2.mp4';
 import video3 from '@/assets/not_a_video.mp4';
+import { RangeSlider } from '@/components/RangeSlider';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { VideoSelector } from '@/components/VideoSelector';
 import { Button } from '@/components/ui/button';
@@ -11,14 +12,13 @@ import { useEffect, useState } from 'react';
 
 function App() {
     const [videoUrl, setVideoUrl] = useState('');
+    const [range, setRange] = useState<[number, number]>([0, 100]);
 
     async function handleVideoSelect(file: File) {
         setVideoUrl(URL.createObjectURL(file));
 
         await ffmpeg.load();
-        await ffmpeg
-            .get()
-            .writeFile(file.name, await fetchFile(file));
+        await ffmpeg.get().writeFile(file.name, await fetchFile(file));
 
         const entries = await ffmpeg.get().listDir('/');
         const filesOnly = entries.filter((entry) => !entry.isDir);
@@ -72,6 +72,14 @@ function App() {
                     Load Invalid Video
                 </Button>
             </div>
+
+            <RangeSlider
+                value={range}
+                onValueChange={setRange}
+                min={0}
+                max={100}
+                className="mt-6"
+            />
         </div>
     );
 }
