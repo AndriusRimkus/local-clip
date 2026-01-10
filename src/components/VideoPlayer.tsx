@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import type { Ref } from 'react';
+import { useImperativeHandle, useRef, useState } from 'react';
 
 export interface VideoMetadata {
     duration: number;
@@ -8,11 +9,15 @@ export interface VideoMetadata {
     videoHeight: number;
 }
 
+export interface VideoPlayerHandle {
+    seek: (time: number) => void;
+}
+
 interface VideoPlayerProps {
     src: string;
     autoPlay?: boolean;
     className?: string;
-    seekTime?: number;
+    ref?: Ref<VideoPlayerHandle>;
     onLoadStart?: () => void;
     onLoadedMetadata?: (metadata: VideoMetadata) => void;
     onCanPlay?: () => void;
@@ -24,7 +29,7 @@ function VideoPlayer({
     src,
     autoPlay = true,
     className,
-    seekTime,
+    ref,
     onLoadStart,
     onLoadedMetadata,
     onCanPlay,
@@ -32,6 +37,12 @@ function VideoPlayer({
     onTimeUpdate,
 }: VideoPlayerProps) {
     const videoRef = useRef<HTMLVideoElement>(null!);
+
+    useImperativeHandle(ref, () => ({
+        seek(time: number) {
+            videoRef.current.currentTime = time;
+        },
+    }));
 
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string>();
@@ -66,12 +77,6 @@ function VideoPlayer({
 
         onError?.(videoRef.current.error ?? undefined);
     }
-
-    useEffect(() => {
-        if (seekTime !== undefined) {
-            videoRef.current.currentTime = seekTime;
-        }
-    }, [seekTime]);
 
     return (
         <div className={cn('relative overflow-hidden rounded-lg', className)}>

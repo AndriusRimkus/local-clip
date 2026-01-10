@@ -18,7 +18,9 @@ Rules and guidelines for AI agents working on this codebase.
 
 1. **Do not use `React.memo`, `useCallback`, or `useMemo`** - The React Compiler will handle memoization automatically.
 
-2. **You Might Not Need an Effect** - Follow these principles from https://react.dev/learn/you-might-not-need-an-effect:
+2. **Do not use `forwardRef`** - In React 19+, pass `ref` as a regular prop instead of using `forwardRef`.
+
+3. **You Might Not Need an Effect** - Follow these principles from https://react.dev/learn/you-might-not-need-an-effect:
     - **Use Effects ONLY for synchronizing with external systems** (DOM APIs, network, third-party libraries, browser APIs)
     - **DO NOT use Effects for**:
         - Transforming data for rendering (calculate directly during render)
