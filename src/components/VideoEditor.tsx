@@ -4,6 +4,7 @@ import {
     type VideoMetadata,
     type VideoPlayerHandle,
 } from '@/components/VideoPlayer';
+import type { TimeRange } from '@/lib/types';
 import { useRef, useState } from 'react';
 
 interface VideoEditorProps {
@@ -13,7 +14,7 @@ interface VideoEditorProps {
 export function VideoEditor({ videoUrl }: VideoEditorProps) {
     const playerRef = useRef<VideoPlayerHandle>(null);
     const [duration, setDuration] = useState<number>();
-    const [range, setRange] = useState<[number, number]>();
+    const [range, setRange] = useState<TimeRange>();
     const [currentTime, setCurrentTime] = useState<number>(0);
 
     function handleOnLoadedMetadata(videoMetadata: VideoMetadata) {
@@ -25,7 +26,7 @@ export function VideoEditor({ videoUrl }: VideoEditorProps) {
         setCurrentTime(time);
     }
 
-    function handleRangeUpdate(range: [number, number]) {
+    function handleRangeUpdate(range: TimeRange) {
         setRange(range);
         playerRef.current?.seek(range[0]);
     }

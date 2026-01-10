@@ -1,8 +1,9 @@
+import type { TimeRange } from '@/lib/types';
 import type { RefObject } from 'react';
 
 interface UseRangeClickOptions {
     rangeRef: RefObject<HTMLElement | null>;
-    value: [number, number];
+    value: TimeRange;
     handler: (value: number) => void;
     disabled?: boolean;
 }

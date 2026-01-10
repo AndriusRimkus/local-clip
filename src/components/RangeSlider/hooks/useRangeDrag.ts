@@ -1,17 +1,18 @@
+import type { TimeRange } from '@/lib/types';
 import { useDrag } from '@use-gesture/react';
 import type { RefObject } from 'react';
 import { useRef, useState } from 'react';
 
 interface UseRangeDragOptions {
     trackRef: RefObject<HTMLElement | null>;
-    value: [number, number];
+    value: TimeRange;
     min: number;
     max: number;
-    onDrag: (value: [number, number]) => void;
+    onDrag: (value: TimeRange) => void;
 }
 
 interface DragMemo {
-    initialValue: [number, number];
+    initialValue: TimeRange;
     trackWidth: number;
 }
 

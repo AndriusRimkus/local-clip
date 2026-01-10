@@ -1,3 +1,4 @@
+import type { TimeRange } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import * as Slider from '@radix-ui/react-slider';
 import { useRef } from 'react';
@@ -5,8 +6,8 @@ import { useRangeClick } from './hooks/useRangeClick';
 import { useRangeDrag } from './hooks/useRangeDrag';
 
 interface RangeSliderProps {
-    value: [number, number];
-    onValueChange: (value: [number, number]) => void;
+    value: TimeRange;
+    onValueChange: (value: TimeRange) => void;
     min: number;
     max: number;
     currentTime?: number;
