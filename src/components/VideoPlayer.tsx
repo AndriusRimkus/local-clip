@@ -97,7 +97,7 @@ function VideoPlayer({
                 src={src}
                 autoPlay={autoPlay}
                 controls
-                onLoadStart={() => onLoadStart?.()}
+                onLoadStart={onLoadStart}
                 onLoadedMetadata={handleLoadedMetadata}
                 onCanPlay={handleCanPlay}
                 onError={handleError}

@@ -1,6 +1,6 @@
 import { useDrag } from '@use-gesture/react';
 import type { RefObject } from 'react';
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface UseRangeDragOptions {
     trackRef: RefObject<HTMLElement | null>;
@@ -23,7 +23,7 @@ export function useRangeDrag({
     onDrag,
 }: UseRangeDragOptions) {
     const [isDragging, setIsDragging] = useState(false);
-    const [justFinishedDragging, setJustFinishedDragging] = useState(false);
+    const justFinishedDraggingRef = useRef(false);
 
     const bindDrag = useDrag(
         ({ movement: [mx], active, first, memo: _memo }): DragMemo => {
@@ -32,6 +32,7 @@ export function useRangeDrag({
             setIsDragging(active);
 
             if (first) {
+                justFinishedDraggingRef.current = false;
                 return {
                     initialValue: value,
                     trackWidth: trackRef.current?.offsetWidth || 0,
@@ -39,7 +40,10 @@ export function useRangeDrag({
             }
 
             if (!active) {
-                setJustFinishedDragging(true);
+                justFinishedDraggingRef.current = true;
+                queueMicrotask(() => {
+                    justFinishedDraggingRef.current = false;
+                });
             }
 
             const valueRange = max - min;
@@ -69,19 +73,11 @@ export function useRangeDrag({
         }
     );
 
-    useEffect(() => {
-        if (justFinishedDragging) {
-            const timeout = setTimeout(() => {
-                setJustFinishedDragging(false);
-            }, 0);
-
-            return () => clearTimeout(timeout);
-        }
-    }, [justFinishedDragging]);
-
     return {
         bindDrag,
         isDragging,
-        justFinishedDragging,
+        get justFinishedDragging() {
+            return justFinishedDraggingRef.current;
+        },
     };
 }
