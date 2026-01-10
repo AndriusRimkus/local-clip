@@ -1,4 +1,5 @@
 import { RangeSlider } from '@/components/RangeSlider';
+import { Input } from '@/components/ui/input';
 import {
     VideoPlayer,
     type VideoMetadata,
@@ -24,6 +25,10 @@ export function VideoEditor({ videoUrl }: VideoEditorProps) {
 
     function handleTimeUpdate(time: number) {
         setCurrentTime(time);
+
+        if (range && time >= range[1]) {
+            playerRef.current?.seek(range[0]);
+        }
     }
 
     function handleRangeUpdate(range: TimeRange) {
@@ -33,6 +38,29 @@ export function VideoEditor({ videoUrl }: VideoEditorProps) {
 
     function handleSeek(time: number) {
         playerRef.current?.seek(time);
+    }
+
+    function handleStartChange(e: React.ChangeEvent<HTMLInputElement>) {
+        if (!range || !duration) {
+            return;
+        }
+
+        const value = Math.min(Math.max(0, Number(e.target.value)), range[1]);
+        
+        handleRangeUpdate([value, range[1]]);
+    }
+
+    function handleEndChange(e: React.ChangeEvent<HTMLInputElement>) {
+        if (!range || !duration) {
+            return;
+        }
+
+        const value = Math.min(
+            Math.max(range[0], Number(e.target.value)),
+            duration
+        );
+
+        handleRangeUpdate([range[0], value]);
     }
 
     return (
@@ -47,14 +75,37 @@ export function VideoEditor({ videoUrl }: VideoEditorProps) {
             />
 
             {duration !== undefined && range !== undefined && (
-                <RangeSlider
-                    value={range}
-                    onValueChange={handleRangeUpdate}
-                    min={0}
-                    max={duration}
-                    currentTime={currentTime}
-                    onSeek={handleSeek}
-                />
+                <>
+                    <RangeSlider
+                        value={range}
+                        onValueChange={handleRangeUpdate}
+                        min={0}
+                        max={duration}
+                        currentTime={currentTime}
+                        onSeek={handleSeek}
+                    />
+
+                    <div className="flex gap-4">
+                        <Input
+                            type="number"
+                            value={range[0].toFixed(1)}
+                            onChange={handleStartChange}
+                            min={0}
+                            max={range[1]}
+                            step={0.1}
+                            className="w-24"
+                        />
+                        <Input
+                            type="number"
+                            value={range[1].toFixed(1)}
+                            onChange={handleEndChange}
+                            min={range[0]}
+                            max={duration}
+                            step={0.1}
+                            className="w-24"
+                        />
+                    </div>
+                </>
             )}
         </div>
     );

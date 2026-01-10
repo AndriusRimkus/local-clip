@@ -4,14 +4,14 @@ import type { RefObject } from 'react';
 interface UseRangeClickOptions {
     rangeRef: RefObject<HTMLElement | null>;
     value: TimeRange;
-    handler: (value: number) => void;
+    onSeek: (value: number) => void;
     disabled?: boolean;
 }
 
 export function useRangeClick({
     rangeRef,
     value,
-    handler,
+    onSeek,
     disabled,
 }: UseRangeClickOptions) {
     function handleRangeClick(e: React.MouseEvent) {
@@ -29,7 +29,7 @@ export function useRangeClick({
         const percentage = clickX / rect.width;
         const clickValue = value[0] + percentage * (value[1] - value[0]);
 
-        handler(clickValue);
+        onSeek(clickValue);
     }
 
     return { handleRangeClick };

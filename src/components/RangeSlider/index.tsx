@@ -38,7 +38,7 @@ function RangeSlider({
     const { handleRangeClick } = useRangeClick({
         rangeRef,
         value,
-        handler: (val) => onSeek?.(val),
+        onSeek: (val) => onSeek?.(val),
         disabled: isDragging || justFinishedDragging,
     });
 
