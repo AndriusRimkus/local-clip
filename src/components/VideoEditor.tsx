@@ -24,10 +24,10 @@ export function VideoEditor({ videoUrl }: VideoEditorProps) {
         setRange([0, videoMetadata.duration]);
     }
 
-    function handleTimeUpdate(time: number) {
-        setCurrentTime(time);
+    function handleFrame(metadata: VideoFrameCallbackMetadata) {
+        setCurrentTime(metadata.mediaTime);
 
-        if (range && time >= range[1]) {
+        if (range && metadata.mediaTime >= range[1]) {
             playerRef.current?.seek(range[0]);
         }
     }
@@ -72,7 +72,7 @@ export function VideoEditor({ videoUrl }: VideoEditorProps) {
                 src={videoUrl}
                 className="aspect-video"
                 onLoadedMetadata={handleOnLoadedMetadata}
-                onTimeUpdate={handleTimeUpdate}
+                onFrame={handleFrame}
             />
 
             {duration !== undefined && range !== undefined && (

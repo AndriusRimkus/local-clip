@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import type { Ref } from 'react';
-import { useImperativeHandle, useRef, useState } from 'react';
+import { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 export interface VideoMetadata {
     duration: number;
@@ -21,7 +21,7 @@ interface VideoPlayerProps {
     onLoadStart?: () => void;
     onLoadedMetadata?: (metadata: VideoMetadata) => void;
     onCanPlay?: () => void;
-    onTimeUpdate?: (currentTime: number) => void;
+    onFrame?: (metadata: VideoFrameCallbackMetadata) => void;
     onError?: (error?: MediaError) => void;
 }
 
@@ -34,7 +34,7 @@ function VideoPlayer({
     onLoadedMetadata,
     onCanPlay,
     onError,
-    onTimeUpdate,
+    onFrame,
 }: VideoPlayerProps) {
     const videoRef = useRef<HTMLVideoElement>(null!);
 
@@ -49,6 +49,25 @@ function VideoPlayer({
 
     const showOverlay = isLoading || !!errorMessage;
 
+    useEffect(() => {
+        const video = videoRef.current;
+        let handle: number;
+
+        function onVideoFrame(
+            _now: DOMHighResTimeStamp,
+            metadata: VideoFrameCallbackMetadata
+        ) {
+            onFrame?.(metadata);
+            handle = video.requestVideoFrameCallback(onVideoFrame);
+        }
+
+        handle = video.requestVideoFrameCallback(onVideoFrame);
+
+        return function () {
+            video.cancelVideoFrameCallback(handle);
+        };
+    }, [onFrame]);
+
     function handleLoadedMetadata() {
         onLoadedMetadata?.({
             duration: videoRef.current.duration,
@@ -60,10 +79,6 @@ function VideoPlayer({
     function handleCanPlay() {
         setIsLoading(false);
         onCanPlay?.();
-    }
-
-    function handleTimeUpdate() {
-        onTimeUpdate?.(videoRef.current.currentTime);
     }
 
     function handleError() {
@@ -101,7 +116,6 @@ function VideoPlayer({
                 onLoadedMetadata={handleLoadedMetadata}
                 onCanPlay={handleCanPlay}
                 onError={handleError}
-                onTimeUpdate={handleTimeUpdate}
                 className={cn('h-full w-full', showOverlay && 'invisible')}
             />
         </div>

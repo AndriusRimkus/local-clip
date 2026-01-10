@@ -44,11 +44,6 @@ function RangeSlider({
         disabled: isDragging || justFinishedDragging,
     });
 
-    const playPositionPercent =
-        currentTime !== undefined
-            ? ((currentTime - min) / (max - min)) * 100
-            : 0;
-
     return (
         <Slider.Root
             value={value}
@@ -67,13 +62,7 @@ function RangeSlider({
                 className="relative bg-gray-50 border-1 border-gray-200 rounded-sm grow h-14"
             >
                 <TrackBackground />
-
-                {currentTime !== undefined && (
-                    <div
-                        className="absolute top-0 h-full w-0.5 bg-red-500 pointer-events-none z-10 transition-all"
-                        style={{ left: `${playPositionPercent}%` }}
-                    />
-                )}
+                <TrackArrow currentTime={currentTime!} min={min} max={max} />
 
                 <Slider.Range
                     ref={rangeRef}
@@ -101,6 +90,28 @@ const Thumb = React.memo(function Thumb() {
         </Slider.Thumb>
     );
 });
+
+function TrackArrow({
+    currentTime,
+    min,
+    max,
+}: {
+    currentTime: number;
+    min: number;
+    max: number;
+}) {
+    const playPositionPercent =
+        currentTime !== undefined
+            ? ((currentTime - min) / (max - min)) * 100
+            : 0;
+
+    return (
+        <div
+            className="absolute top-0 h-full w-0.5 bg-red-500 pointer-events-none z-10"
+            style={{ left: `${playPositionPercent}%` }}
+        />
+    );
+}
 
 const TrackBackground = React.memo(function TrackBackground() {
     const lines = Array.from({ length: 51 }, (_, i) => i);
