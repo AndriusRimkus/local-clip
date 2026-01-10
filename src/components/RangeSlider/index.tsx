@@ -1,7 +1,7 @@
 import type { TimeRange } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import * as Slider from '@radix-ui/react-slider';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { useRangeClick } from './hooks/useRangeClick';
 import { useRangeDrag } from './hooks/useRangeDrag';
 
@@ -10,6 +10,7 @@ interface RangeSliderProps {
     onValueChange: (value: TimeRange) => void;
     min: number;
     max: number;
+    step: number;
     currentTime?: number;
     onSeek?: (time: number) => void;
     className?: string;
@@ -20,6 +21,7 @@ function RangeSlider({
     onValueChange,
     min,
     max,
+    step,
     currentTime,
     onSeek,
     className,
@@ -53,7 +55,7 @@ function RangeSlider({
             onValueChange={onValueChange}
             min={min}
             max={max}
-            step={0.1}
+            step={step}
             disabled={isDragging}
             className={cn(
                 'relative flex h-14 select-none touch-none',
@@ -90,7 +92,7 @@ function RangeSlider({
     );
 }
 
-function Thumb() {
+const Thumb = React.memo(function Thumb() {
     return (
         <Slider.Thumb className="flex flex-col gap-1 justify-center items-center w-5 h-14 bg-purple-700 rounded-sm border-2 border-white shadow-lg cursor-ew-resize hover:bg-sky-500 hover:ring-sky-300 focus:bg-sky-500 focus:outline-none ring-1 ring-purple-700 focus:ring-sky-300">
             <div className="size-0.5 bg-white rounded-full" />
@@ -98,12 +100,14 @@ function Thumb() {
             <div className="size-0.5 bg-white rounded-full" />
         </Slider.Thumb>
     );
-}
+});
 
-function TrackBackground() {
+const TrackBackground = React.memo(function TrackBackground() {
+    const lines = Array.from({ length: 51 }, (_, i) => i);
+
     return (
         <div className="absolute inset-0 flex justify-between px-1 pointer-events-none">
-            {Array.from({ length: 51 }, (_, i) => (
+            {lines.map((i) => (
                 <div
                     key={i}
                     className={cn(
@@ -114,6 +118,6 @@ function TrackBackground() {
             ))}
         </div>
     );
-}
+});
 
 export { RangeSlider };

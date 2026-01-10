@@ -6,6 +6,7 @@ import {
     type VideoPlayerHandle,
 } from '@/components/VideoPlayer';
 import type { TimeRange } from '@/lib/types';
+import { TIME_STEP } from '@/lib/types';
 import { useRef, useState } from 'react';
 
 interface VideoEditorProps {
@@ -46,7 +47,7 @@ export function VideoEditor({ videoUrl }: VideoEditorProps) {
         }
 
         const value = Math.min(Math.max(0, Number(e.target.value)), range[1]);
-        
+
         handleRangeUpdate([value, range[1]]);
     }
 
@@ -81,6 +82,7 @@ export function VideoEditor({ videoUrl }: VideoEditorProps) {
                         onValueChange={handleRangeUpdate}
                         min={0}
                         max={duration}
+                        step={TIME_STEP}
                         currentTime={currentTime}
                         onSeek={handleSeek}
                     />
@@ -92,7 +94,7 @@ export function VideoEditor({ videoUrl }: VideoEditorProps) {
                             onChange={handleStartChange}
                             min={0}
                             max={range[1]}
-                            step={0.1}
+                            step={TIME_STEP}
                             className="w-24"
                         />
                         <Input
@@ -101,7 +103,7 @@ export function VideoEditor({ videoUrl }: VideoEditorProps) {
                             onChange={handleEndChange}
                             min={range[0]}
                             max={duration}
-                            step={0.1}
+                            step={TIME_STEP}
                             className="w-24"
                         />
                     </div>
