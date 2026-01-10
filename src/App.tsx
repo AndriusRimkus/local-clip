@@ -1,8 +1,7 @@
 import video1 from '@/assets/demo_video_1.mp4';
 import video2 from '@/assets/demo_video_2.mp4';
 import video3 from '@/assets/not_a_video.mp4';
-import { RangeSlider } from '@/components/RangeSlider';
-import { VideoPlayer, type VideoMetadata } from '@/components/VideoPlayer';
+import { VideoEditor } from '@/components/VideoEditor';
 import { VideoSelector } from '@/components/VideoSelector';
 import { Button } from '@/components/ui/button';
 import ffmpeg from '@/lib/ffmpeg';
@@ -12,8 +11,6 @@ import { useEffect, useState } from 'react';
 
 function App() {
     const [videoUrl, setVideoUrl] = useState('');
-    const [duration, setDuration] = useState<number>();
-    const [range, setRange] = useState<[number, number]>();
 
     async function handleVideoSelect(file: File) {
         setVideoUrl(URL.createObjectURL(file));
@@ -28,13 +25,6 @@ function App() {
             'Files:',
             filesOnly.map((f) => f.name)
         );
-    }
-
-    function handleonOnLoadedMetadata(videoMetadata: VideoMetadata) {
-        if (duration === undefined) {
-            setDuration(videoMetadata.duration);
-            setRange([0, videoMetadata.duration]);
-        }
     }
 
     async function loadDemoVideo(videoPath: string) {
@@ -58,13 +48,7 @@ function App() {
             {!videoUrl ? (
                 <VideoSelector onVideoSelect={handleVideoSelect} />
             ) : (
-                <VideoPlayer
-                    key={videoUrl}
-                    src={videoUrl}
-                    currentTime={range?.[0]}
-                    className="aspect-video"
-                    onLoadedMetadata={handleonOnLoadedMetadata}
-                />
+                <VideoEditor key={videoUrl} videoUrl={videoUrl} />
             )}
 
             <div className="flex gap-4 justify-center mt-6">
@@ -81,16 +65,6 @@ function App() {
                     Load Invalid Video
                 </Button>
             </div>
-
-            {duration !== undefined && range !== undefined && (
-                <RangeSlider
-                    value={range}
-                    onValueChange={setRange}
-                    min={0}
-                    max={duration}
-                    className="mt-6"
-                />
-            )}
         </div>
     );
 }

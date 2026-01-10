@@ -12,7 +12,7 @@ interface VideoPlayerProps {
     src: string;
     autoPlay?: boolean;
     className?: string;
-    currentTime?: number;
+    seekTime?: number;
     onLoadStart?: () => void;
     onLoadedMetadata?: (metadata: VideoMetadata) => void;
     onCanPlay?: () => void;
@@ -24,7 +24,7 @@ function VideoPlayer({
     src,
     autoPlay = true,
     className,
-    currentTime,
+    seekTime,
     onLoadStart,
     onLoadedMetadata,
     onCanPlay,
@@ -68,14 +68,10 @@ function VideoPlayer({
     }
 
     useEffect(() => {
-        videoRef.current.load();
-    }, [src]);
-
-    useEffect(() => {
-        if (currentTime !== undefined) {
-            videoRef.current.currentTime = currentTime;
+        if (seekTime !== undefined) {
+            videoRef.current.currentTime = seekTime;
         }
-    }, [currentTime]);
+    }, [seekTime]);
 
     return (
         <div className={cn('relative overflow-hidden rounded-lg', className)}>
