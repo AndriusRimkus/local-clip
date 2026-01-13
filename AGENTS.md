@@ -8,7 +8,25 @@ Rules and guidelines for AI agents working on this codebase.
 
 2. **Use named exports for components** - Always use named exports instead of default exports for React components.
 
-3. **Use function declarations** - Prefer `function Name() {}` over `const Name = () => {}` for both components and internal event handlers/helpers.
+3. **Use function declarations** - Prefer `function Name() {}` over `const Name = () => {}` for components, event handlers, helpers, and store actions.
+
+    ```typescript
+    // ✅ Good
+    function MyComponent() {}
+    function handleClick() {}
+
+    create((set) => ({
+        addItem(item) {},
+    }));
+
+    // ❌ Bad
+    const MyComponent = () => {};
+    const handleClick = () => {};
+
+    create((set) => ({
+        addItem: (item) => {},
+    }));
+    ```
 
 ## UI Components
 
