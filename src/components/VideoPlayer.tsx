@@ -63,9 +63,7 @@ function VideoPlayer({
 
         handle = video.requestVideoFrameCallback(onVideoFrame);
 
-        return function () {
-            video.cancelVideoFrameCallback(handle);
-        };
+        return () => video.cancelVideoFrameCallback(handle);
     }, [onFrame]);
 
     function handleLoadedMetadata() {
