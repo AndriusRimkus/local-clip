@@ -1,8 +1,7 @@
 import type { TimeRange } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import * as Slider from '@radix-ui/react-slider';
-import React, { useRef } from 'react';
-import { useRangeClick } from './hooks/useRangeClick';
+import { useRef } from 'react';
 import { useRangeDrag } from './hooks/useRangeDrag';
 
 interface RangeSliderProps {
@@ -37,12 +36,23 @@ function RangeSlider({
         onDrag: onValueChange,
     });
 
-    const { handleRangeClick } = useRangeClick({
-        rangeRef,
-        value,
-        onSeek: (val) => onSeek?.(val),
-        disabled: isDragging || justFinishedDragging,
-    });
+    function handleRangeClick(e: React.MouseEvent) {
+        if (isDragging || justFinishedDragging) {
+            return;
+        }
+
+        const rect = rangeRef.current?.getBoundingClientRect();
+
+        if (!rect || rect.width === 0) {
+            return;
+        }
+
+        const clickX = e.clientX - rect.left;
+        const percentage = clickX / rect.width;
+        const clickValue = value[0] + percentage * (value[1] - value[0]);
+
+        onSeek?.(clickValue);
+    }
 
     return (
         <Slider.Root
@@ -81,7 +91,7 @@ function RangeSlider({
     );
 }
 
-const Thumb = React.memo(function Thumb() {
+function Thumb() {
     return (
         <Slider.Thumb className="flex flex-col gap-1 justify-center items-center w-5 h-14 bg-purple-700 rounded-sm border-2 border-white shadow-lg cursor-ew-resize hover:bg-sky-500 hover:ring-sky-300 focus:bg-sky-500 focus:outline-none ring-1 ring-purple-700 focus:ring-sky-300">
             <div className="size-0.5 bg-white rounded-full" />
@@ -89,7 +99,7 @@ const Thumb = React.memo(function Thumb() {
             <div className="size-0.5 bg-white rounded-full" />
         </Slider.Thumb>
     );
-});
+}
 
 function TrackArrow({
     currentTime,
@@ -113,7 +123,7 @@ function TrackArrow({
     );
 }
 
-const TrackBackground = React.memo(function TrackBackground() {
+function TrackBackground() {
     const lines = Array.from({ length: 51 }, (_, i) => i);
 
     return (
@@ -129,6 +139,6 @@ const TrackBackground = React.memo(function TrackBackground() {
             ))}
         </div>
     );
-});
+}
 
 export { RangeSlider };
