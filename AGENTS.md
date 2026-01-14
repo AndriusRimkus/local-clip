@@ -6,7 +6,18 @@ Rules and guidelines for AI agents working on this codebase.
 
 1. **Do not add comments** - Code should be self-documenting. Use clear variable names, function names, and structure instead of comments.
 
-2. **Use named exports for components** - Always use named exports instead of default exports for React components.
+2. **Use named exports for components** - Always use named exports instead of default exports for React components. Export components at the bottom of the file using `export { ComponentName };` syntax.
+
+    ```typescript
+    // ✅ Good
+    function MyComponent() {}
+
+    export { MyComponent };
+
+    // ❌ Bad
+    export function MyComponent() {}
+    export default MyComponent;
+    ```
 
 3. **Use function declarations** - Prefer `function Name() {}` over `const Name = () => {}` for components, event handlers, helpers, and store actions.
 
