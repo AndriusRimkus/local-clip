@@ -1,7 +1,12 @@
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
-import type { Ref } from 'react';
-import { useEffect, useImperativeHandle, useRef, useState } from 'react';
+import {
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+    type RefObject,
+} from 'react';
 
 export interface VideoMetadata {
     duration: number;
@@ -17,7 +22,7 @@ interface VideoPlayerProps {
     src: string;
     autoPlay?: boolean;
     className?: string;
-    ref?: Ref<VideoPlayerHandle>;
+    ref?: RefObject<VideoPlayerHandle>;
     onLoadStart?: () => void;
     onLoadedMetadata?: (metadata: VideoMetadata) => void;
     onCanPlay?: () => void;
