@@ -55,3 +55,5 @@ Rules and guidelines for AI agents working on this codebase.
         - Transforming data for rendering (calculate directly during render)
         - Handling user events (use event handlers instead)
         - Resetting state when props change (use `key` prop to remount or handle in event handlers)
+
+4. **Prefer `RefObject` for refs** - Use `RefObject<T>` for ref types (e.g. `ref?: RefObject<T>` in props).
