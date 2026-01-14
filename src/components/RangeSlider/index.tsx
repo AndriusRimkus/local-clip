@@ -1,7 +1,7 @@
 import type { TimeRange } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import * as Slider from '@radix-ui/react-slider';
-import { useRef } from 'react';
+import { useImperativeHandle, useRef, type RefObject } from 'react';
 import { useRangeDrag } from './hooks/useRangeDrag';
 
 interface RangeSliderProps {
@@ -10,9 +10,13 @@ interface RangeSliderProps {
     min: number;
     max: number;
     step: number;
-    currentTime?: number;
     onSeek?: (time: number) => void;
     className?: string;
+    ref?: RefObject<RangeSliderHandle>;
+}
+
+export interface RangeSliderHandle {
+    setPlayheadProgress: (percentage: number) => void;
 }
 
 function RangeSlider({
@@ -21,12 +25,13 @@ function RangeSlider({
     min,
     max,
     step,
-    currentTime,
     onSeek,
     className,
+    ref,
 }: RangeSliderProps) {
     const trackRef = useRef<HTMLSpanElement>(null);
     const rangeRef = useRef<HTMLSpanElement>(null);
+    const arrowRef = useRef<HTMLSpanElement>(null);
 
     const { bindDrag, isDragging, justFinishedDragging } = useRangeDrag({
         trackRef,
@@ -35,6 +40,14 @@ function RangeSlider({
         max,
         onDrag: onValueChange,
     });
+
+    useImperativeHandle(ref, () => ({
+        setPlayheadProgress(percentage: number) {
+            if (arrowRef.current) {
+                arrowRef.current.style.left = `${percentage}%`;
+            }
+        },
+    }));
 
     function handleRangeClick(e: React.MouseEvent) {
         if (isDragging || justFinishedDragging) {
@@ -72,7 +85,7 @@ function RangeSlider({
                 className="relative bg-gray-50 border-1 border-gray-200 rounded-sm grow h-14"
             >
                 <TrackBackground />
-                <TrackArrow currentTime={currentTime!} min={min} max={max} />
+                <TrackArrow ref={arrowRef} />
 
                 <Slider.Range
                     ref={rangeRef}
@@ -101,24 +114,11 @@ function Thumb() {
     );
 }
 
-function TrackArrow({
-    currentTime,
-    min,
-    max,
-}: {
-    currentTime: number;
-    min: number;
-    max: number;
-}) {
-    const playPositionPercent =
-        currentTime !== undefined
-            ? ((currentTime - min) / (max - min)) * 100
-            : 0;
-
+function TrackArrow({ ref }: { ref: RefObject<HTMLSpanElement | null> }) {
     return (
-        <div
-            className="absolute top-0 h-full w-0.5 bg-red-500 pointer-events-none z-10"
-            style={{ left: `${playPositionPercent}%` }}
+        <span
+            ref={ref}
+            className="absolute h-full w-0.5 bg-sky-500 z-10 -translate-x-1/2"
         />
     );
 }
@@ -127,7 +127,7 @@ function TrackBackground() {
     const lines = Array.from({ length: 51 }, (_, i) => i);
 
     return (
-        <div className="absolute inset-0 flex justify-between px-1 pointer-events-none">
+        <span className="absolute inset-0 flex justify-between px-1 pointer-events-none">
             {lines.map((i) => (
                 <div
                     key={i}
@@ -137,7 +137,7 @@ function TrackBackground() {
                     )}
                 />
             ))}
-        </div>
+        </span>
     );
 }
 
