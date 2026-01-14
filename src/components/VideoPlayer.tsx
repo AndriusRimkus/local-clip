@@ -22,7 +22,7 @@ interface VideoPlayerProps {
     src: string;
     autoPlay?: boolean;
     className?: string;
-    ref?: RefObject<VideoPlayerHandle>;
+    ref?: RefObject<VideoPlayerHandle | null>;
     onLoadStart?: () => void;
     onLoadedMetadata?: (metadata: VideoMetadata) => void;
     onCanPlay?: () => void;

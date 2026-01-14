@@ -1,16 +1,19 @@
 import video1 from '@/assets/demo_video_1.mp4';
 import video2 from '@/assets/demo_video_2.mp4';
 import video3 from '@/assets/not_a_video.mp4';
+import { ClipsLibrary } from '@/components/ClipsLibrary';
 import { VideoEditor } from '@/components/VideoEditor';
 import { VideoSelector } from '@/components/VideoSelector';
 import { Button } from '@/components/ui/button';
 import ffmpeg from '@/lib/ffmpeg';
+import type { Clip } from '@/lib/types';
 import { parseFileName, urlToFile } from '@/utils/file';
 import { fetchFile } from '@ffmpeg/util';
 import { useEffect, useState } from 'react';
 
 function App() {
     const [videoUrl, setVideoUrl] = useState('');
+    const [editingClip, setEditingClip] = useState<Clip>();
 
     async function handleVideoSelect(file: File) {
         setVideoUrl(URL.createObjectURL(file));
@@ -33,6 +36,14 @@ function App() {
         await handleVideoSelect(file);
     }
 
+    function handleEditClip(clip: Clip) {
+        setEditingClip(clip);
+    }
+
+    function handleEditComplete() {
+        setEditingClip(undefined);
+    }
+
     useEffect(() => {
         return () => {
             if (videoUrl) {
@@ -48,7 +59,19 @@ function App() {
             {!videoUrl ? (
                 <VideoSelector onVideoSelect={handleVideoSelect} />
             ) : (
-                <VideoEditor key={videoUrl} videoUrl={videoUrl} />
+                <div className="flex flex-col gap-8">
+                    <VideoEditor
+                        key={editingClip?.id ?? videoUrl}
+                        videoUrl={videoUrl}
+                        editingClip={editingClip}
+                        onEditComplete={handleEditComplete}
+                    />
+
+                    <div>
+                        <h2 className="mb-4 text-lg font-semibold">Clips</h2>
+                        <ClipsLibrary onEdit={handleEditClip} />
+                    </div>
+                </div>
             )}
 
             <div className="flex gap-4 justify-center mt-6">

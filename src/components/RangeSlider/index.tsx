@@ -12,7 +12,7 @@ interface RangeSliderProps {
     step: number;
     onSeek?: (time: number) => void;
     className?: string;
-    ref?: RefObject<RangeSliderHandle>;
+    ref?: RefObject<RangeSliderHandle | null>;
 }
 
 export interface RangeSliderHandle {
