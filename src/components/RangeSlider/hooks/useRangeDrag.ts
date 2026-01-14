@@ -1,7 +1,6 @@
 import type { TimeRange } from '@/lib/types';
 import { useDrag } from '@use-gesture/react';
-import type { RefObject } from 'react';
-import { useRef, useState } from 'react';
+import { useRef, useState, type RefObject } from 'react';
 
 interface UseRangeDragOptions {
     trackRef: RefObject<HTMLElement | null>;
